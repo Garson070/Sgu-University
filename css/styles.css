@@ -56,6 +56,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -65,6 +66,8 @@ body {
   background: var(--bg);
   line-height: 1.55;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 .scroll-progress {
@@ -426,7 +429,8 @@ ul, ol {
   justify-content: center;
   padding: calc(var(--header-h) + 1rem) 0 4.5rem;
   color: var(--white);
-  overflow: clip;
+  overflow-x: hidden;
+  overflow-y: clip;
   background:
     radial-gradient(700px 420px at 88% 78%, color-mix(in srgb, var(--cta-to) 45%, transparent), transparent 60%),
     radial-gradient(600px 360px at 70% 30%, rgba(88, 40, 180, 0.35), transparent 55%),
@@ -556,6 +560,7 @@ ul, ol {
   position: relative;
   z-index: 2;
   width: 100%;
+  max-width: 100%;
   margin-top: 1.5rem;
   padding: 0.85rem 0;
   overflow: hidden;
@@ -1625,10 +1630,6 @@ body.modal-open {
 }
 
 @media (max-width: 768px) {
-  body {
-    overflow-x: hidden;
-  }
-
   .programs-grid,
   .steps,
   .footer-grid,
