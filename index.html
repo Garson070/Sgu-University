@@ -7,7 +7,7 @@
   <title>Сочинский государственный университет</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -30,20 +30,11 @@
           <li><a href="#about">О СочиГУ</a></li>
           <li><a href="#admission">Поступление</a></li>
           <li><a href="#programs">Образование</a></li>
-          <li><a href="#about">Наука</a></li>
-          <li><a href="#news">Студентам</a></li>
           <li><a href="#contacts">Контакты</a></li>
         </ul>
       </nav>
 
       <div class="header-actions">
-        <button class="icon-btn" type="button" aria-label="Поиск">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </button>
-        <button class="lang-btn" type="button" aria-label="Язык сайта">
-          RU
-          <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        </button>
         <a class="btn btn-accent btn-sm header-cta" href="#admission">Поступить</a>
         <button class="burger" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Открыть меню">
           <span></span><span></span><span></span>
@@ -67,17 +58,18 @@
           <p class="hero-lead hero-anim" style="--hero-delay: 120ms">СочиГУ — это современное образование, наука и практика.</p>
           <div class="hero-cta hero-anim" style="--hero-delay: 220ms">
             <a class="btn btn-accent btn-lg" href="#admission">Поступить</a>
-            <a class="btn btn-outline-light btn-lg" href="#about">Смотреть видео</a>
+            <a class="btn btn-outline-light btn-lg" href="https://rutube.ru/channel/25548246/" target="_blank" rel="noopener">Смотреть видео</a>
           </div>
         </div>
 
         <div class="hero-visual hero-anim hero-anim-right" style="--hero-delay: 160ms">
           <img
             class="hero-students"
-            src="assets/hero-students.png"
+            src="assets/hero-students.webp"
             alt="Студенты СочиГУ"
-            width="1600"
-            height="900"
+            width="1200"
+            height="800"
+            decoding="async"
             fetchpriority="high"
           >
         </div>
@@ -315,103 +307,15 @@
         <div class="section-head reveal">
           <div>
             <p class="section-label">Образование</p>
-            <h2 id="programs-title">Образовательные программы</h2>
+            <h2 id="programs-title">Популярные направления</h2>
           </div>
           <p class="programs-count" id="programs-count" aria-live="polite"></p>
         </div>
 
-        <fieldset class="programs-filter reveal" id="programs-filter">
-          <legend class="visually-hidden">Форма обучения</legend>
-          <label class="filter-option">
-            <input type="radio" name="study-form" value="all" checked>
-            <span>Все формы</span>
-          </label>
-          <label class="filter-option">
-            <input type="radio" name="study-form" value="Очная">
-            <span>Очная</span>
-          </label>
-          <label class="filter-option">
-            <input type="radio" name="study-form" value="Очно-заочная">
-            <span>Очно-заочная</span>
-          </label>
-          <label class="filter-option">
-            <input type="radio" name="study-form" value="Заочная">
-            <span>Заочная</span>
-          </label>
-        </fieldset>
-
         <div class="programs-grid reveal-stagger" id="programs-grid"></div>
-        <p class="programs-empty" id="programs-empty" hidden>Нет программ для выбранной формы обучения.</p>
+        <p class="programs-empty" id="programs-empty" hidden>Нет программ для выбранного уровня.</p>
       </div>
     </section>
-
-    <div class="program-modal" id="program-modal" hidden>
-      <div class="program-modal-backdrop" data-close-modal></div>
-      <div
-        class="program-modal-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="program-modal-title"
-        tabindex="-1"
-      >
-        <article class="program-detail-card">
-          <div class="program-detail-top">
-            <span class="program-detail-form" id="program-modal-form">Очная</span>
-            <button type="button" class="program-detail-close" data-close-modal aria-label="Закрыть">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M7 17L17 7M7 7l10 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-            </button>
-          </div>
-
-          <div class="program-detail-body">
-            <h3 id="program-modal-title">Программа</h3>
-            <p class="program-detail-subtitle" id="program-modal-subtitle"></p>
-            <p class="program-detail-note" id="program-modal-note" hidden></p>
-            <p class="program-detail-budget" id="program-modal-budget" hidden>
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="9" cy="8" r="2.2" stroke="currentColor" stroke-width="1.6"/>
-                <circle cx="15" cy="8" r="2.2" stroke="currentColor" stroke-width="1.6"/>
-                <path d="M5.5 17c.6-2.2 2.2-3.4 3.5-3.4s2.9 1.2 3.5 3.4M11.5 17c.6-2.2 2.2-3.4 3.5-3.4s2.9 1.2 3.5 3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-              Есть бюджетные места
-            </p>
-          </div>
-
-          <div class="program-detail-meta">
-            <div class="program-detail-meta-item">
-              <span class="program-detail-meta-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/>
-                  <path d="M9.2 9.2h3.4a2.1 2.1 0 0 1 0 4.2H9.2V9.2Zm0 4.2H13.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              <div>
-                <span class="program-detail-meta-label">стоимость</span>
-                <strong id="program-modal-price">—</strong>
-              </div>
-            </div>
-            <div class="program-detail-meta-item">
-              <span class="program-detail-meta-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <rect x="4" y="5.5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/>
-                  <path d="M8 3.5v4M16 3.5v4M4 10.5h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                </svg>
-              </span>
-              <div>
-                <span class="program-detail-meta-label">срок обучения</span>
-                <strong id="program-modal-duration">—</strong>
-              </div>
-            </div>
-          </div>
-
-          <div class="program-detail-actions">
-            <a class="btn btn-accent" id="program-modal-cta" href="#admission">Подать документы</a>
-            <a class="btn btn-ghost-dark" href="https://sochi.university/" target="_blank" rel="noopener">На сайте СочиГУ</a>
-          </div>
-        </article>
-      </div>
-    </div>
 
     <section class="section admission" id="admission" aria-labelledby="admission-title">
       <div class="container">
@@ -465,6 +369,74 @@
     </section>
   </main>
 
+  <div class="program-modal" id="program-modal" hidden>
+    <div class="program-modal-backdrop" data-close-modal></div>
+    <div
+      class="program-modal-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="program-modal-title"
+      tabindex="-1"
+    >
+      <article class="program-detail-card">
+        <div class="program-detail-top">
+          <span class="program-detail-form" id="program-modal-form">Очная</span>
+          <button type="button" class="program-detail-close" data-close-modal aria-label="Закрыть">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 17L17 7M7 7l10 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="program-detail-body">
+          <h3 id="program-modal-title">Программа</h3>
+          <p class="program-detail-subtitle" id="program-modal-subtitle"></p>
+          <p class="program-detail-note" id="program-modal-note" hidden></p>
+          <p class="program-detail-budget" id="program-modal-budget" hidden>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="9" cy="8" r="2.2" stroke="currentColor" stroke-width="1.6"/>
+              <circle cx="15" cy="8" r="2.2" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M5.5 17c.6-2.2 2.2-3.4 3.5-3.4s2.9 1.2 3.5 3.4M11.5 17c.6-2.2 2.2-3.4 3.5-3.4s2.9 1.2 3.5 3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            Есть бюджетные места
+          </p>
+        </div>
+
+        <div class="program-detail-meta">
+          <div class="program-detail-meta-item">
+            <span class="program-detail-meta-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M9.2 9.2h3.4a2.1 2.1 0 0 1 0 4.2H9.2V9.2Zm0 4.2H13.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <div>
+              <span class="program-detail-meta-label">стоимость</span>
+              <strong id="program-modal-price">—</strong>
+            </div>
+          </div>
+          <div class="program-detail-meta-item">
+            <span class="program-detail-meta-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="4" y="5.5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M8 3.5v4M16 3.5v4M4 10.5h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <div>
+              <span class="program-detail-meta-label">срок обучения</span>
+              <strong id="program-modal-duration">—</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="program-detail-actions">
+          <a class="btn btn-accent" id="program-modal-cta" href="#admission">Подать документы</a>
+          <a class="btn btn-ghost-dark" href="https://sochi.university/" target="_blank" rel="noopener">На сайте СочиГУ</a>
+        </div>
+      </article>
+    </div>
+  </div>
+
   <footer class="site-footer" id="contacts">
     <div class="container footer-grid">
       <div class="footer-brand">
@@ -516,7 +488,7 @@
     </div>
   </footer>
 
-  <button class="to-top" type="button" aria-label="Наверх">↑</button>
+  <button class="to-top" type="button" aria-label="Наверх" aria-hidden="true" tabindex="-1" inert>↑</button>
   <script src="js/main.js"></script>
 </body>
 </html>

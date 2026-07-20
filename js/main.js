@@ -33,9 +33,14 @@
   const nav = document.querySelector("#site-nav");
   const toTop = document.querySelector(".to-top");
   const navLinks = [...document.querySelectorAll('.nav a[href^="#"]')];
-  const sections = navLinks
-    .map((link) => document.querySelector(link.getAttribute("href")))
-    .filter(Boolean);
+  const sections = [
+    ...new Map(
+      navLinks
+        .map((link) => document.querySelector(link.getAttribute("href")))
+        .filter(Boolean)
+        .map((section) => [section.id, section])
+    ).values(),
+  ].sort((a, b) => a.offsetTop - b.offsetTop);
 
   const closeNav = () => {
     if (!burger || !nav) return;
@@ -726,19 +731,68 @@
     phd: phdPrograms,
     college: collegePrograms,
   };
-  const levelTitles = {
-    bachelor: "Образовательные программы",
-    master: "Программы магистратуры",
-    phd: "Программы аспирантуры",
-    college: "Программы колледжа",
+  const featuredByLevel = {
+    bachelor: [
+      "architecture",
+      "applied-it",
+      "hospitality",
+      "tourism-operator",
+      "law-tourism",
+      "economy-marketing",
+      "pedagogy",
+      "psychology-clinic",
+    ],
+    master: [
+      "m-psychology-crisis",
+      "m-service",
+      "m-construction",
+      "m-tourism",
+      "m-economy-full",
+      "m-hospitality-strategy",
+      "m-applied-it",
+      "m-law-private",
+    ],
+    phd: [
+      "phd-arts",
+      "phd-management",
+      "phd-psychology",
+      "phd-economy",
+      "phd-law",
+      "phd-linguistics",
+      "phd-sport-theory",
+      "phd-finance",
+    ],
+    college: [
+      "col-design",
+      "col-software",
+      "col-cooking",
+      "col-building",
+      "col-tourism-11",
+      "col-accounting",
+      "col-transport",
+      "col-landscape",
+    ],
   };
-  const getActivePrograms = () => levelCatalog[activeLevel] || programs;
+  const levelTitles = {
+    bachelor: "Популярные направления",
+    master: "Популярные программы магистратуры",
+    phd: "Популярные программы аспирантуры",
+    college: "Популярные программы колледжа",
+  };
+  const getCatalog = () => levelCatalog[activeLevel] || programs;
+  const getActivePrograms = () => {
+    const catalog = getCatalog();
+    const featuredIds = featuredByLevel[activeLevel];
+    if (!featuredIds?.length) return catalog.slice(0, 8);
+    return featuredIds
+      .map((id) => catalog.find((item) => item.id === id))
+      .filter(Boolean);
+  };
   const programsById = () =>
-    Object.fromEntries(getActivePrograms().map((item) => [item.id, item]));
+    Object.fromEntries(getCatalog().map((item) => [item.id, item]));
   const programsGrid = document.querySelector("#programs-grid");
   const programsCount = document.querySelector("#programs-count");
   const programsEmpty = document.querySelector("#programs-empty");
-  const filterInputs = [...document.querySelectorAll('input[name="study-form"]')];
 
   const icons = {
     arrow: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h12M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -768,7 +822,9 @@
 
     article.innerHTML = `
       <button type="button" class="program-open" data-program="${program.id}" aria-label="Смотреть программу: ${program.title}">
-        <div class="program-card-media" style="background-image:url('assets/covers/${cover}.jpg?v=2')" aria-hidden="true"></div>
+        <div class="program-card-media" aria-hidden="true">
+          <img src="assets/covers/${cover}.webp" alt="" width="960" height="640" loading="lazy" decoding="async">
+        </div>
         <div class="program-card-body">
           <div class="program-card-top">
             <span class="program-form-badge">${program.form}</span>
@@ -801,36 +857,28 @@
     return article;
   };
 
-  const getActiveFilter = () =>
-    filterInputs.find((input) => input.checked)?.value || "all";
-
   const programsTitle = document.querySelector("#programs-title");
   const programsSection = document.querySelector("#programs");
 
   const renderPrograms = () => {
     if (!programsGrid) return;
     const catalog = getActivePrograms();
-    const filter = getActiveFilter();
-    const filtered =
-      filter === "all"
-        ? catalog
-        : catalog.filter((item) => item.form === filter);
 
     if (programsTitle) {
       programsTitle.textContent = levelTitles[activeLevel] || levelTitles.bachelor;
     }
 
     programsGrid.innerHTML = "";
-    filtered.forEach((program) => {
+    catalog.forEach((program) => {
       programsGrid.appendChild(createCard(program));
     });
 
     if (programsCount) {
-      programsCount.textContent = `${filtered.length} из ${catalog.length}`;
+      programsCount.textContent = `${catalog.length} направлений`;
     }
 
     if (programsEmpty) {
-      programsEmpty.hidden = filtered.length > 0;
+      programsEmpty.hidden = catalog.length > 0;
     }
 
     programsGrid.querySelectorAll(".program-open").forEach((button) => {
@@ -863,8 +911,50 @@
   const modalPrice = document.querySelector("#program-modal-price");
   const modalDuration = document.querySelector("#program-modal-duration");
   const modalCta = document.querySelector("#program-modal-cta");
+  const inertTargets = [
+    document.querySelector(".site-header"),
+    document.querySelector("#main"),
+    document.querySelector(".site-footer"),
+  ].filter(Boolean);
+  const focusableSelector =
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
   let lastFocus = null;
   let closingTimer = null;
+
+  const getModalFocusable = () =>
+    [...(modalDialog?.querySelectorAll(focusableSelector) || [])].filter(
+      (el) => !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true"
+    );
+
+  const setPageInert = (on) => {
+    inertTargets.forEach((el) => {
+      if (on) el.setAttribute("inert", "");
+      else el.removeAttribute("inert");
+    });
+  };
+
+  const trapModalFocus = (event) => {
+    if (event.key !== "Tab" || !modal || modal.hidden) return;
+    const focusables = getModalFocusable();
+    if (!focusables.length) {
+      event.preventDefault();
+      modalDialog?.focus({ preventScroll: true });
+      return;
+    }
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement;
+
+    if (event.shiftKey) {
+      if (active === first || active === modalDialog || !modal.contains(active)) {
+        event.preventDefault();
+        last.focus();
+      }
+    } else if (active === last || !modal.contains(active)) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
 
   const fillProgramModal = (data) => {
     modalTitle.textContent = data.title;
@@ -894,6 +984,7 @@
     lastFocus = trigger || document.activeElement;
     fillProgramModal(data);
     modal.hidden = false;
+    setPageInert(true);
     requestAnimationFrame(() => {
       modal.classList.add("is-open");
       modal.classList.remove("is-closing");
@@ -907,6 +998,7 @@
     modal.classList.add("is-closing");
     modal.classList.remove("is-open");
     document.body.classList.remove("modal-open");
+    setPageInert(false);
 
     closingTimer = setTimeout(() => {
       modal.hidden = true;
@@ -915,10 +1007,6 @@
       closingTimer = null;
     }, 320);
   };
-
-  filterInputs.forEach((input) => {
-    input.addEventListener("change", renderPrograms);
-  });
 
   document.querySelectorAll(".level-item[data-level]").forEach((item) => {
     item.addEventListener("click", (event) => {
@@ -929,9 +1017,6 @@
       document.querySelectorAll(".level-item[data-level]").forEach((el) => {
         el.classList.toggle("is-active", el === item);
       });
-      // reset form filter when switching catalog
-      const allFilter = filterInputs.find((input) => input.value === "all");
-      if (allFilter) allFilter.checked = true;
       renderPrograms();
       if (programsSection) {
         const top =
@@ -950,11 +1035,14 @@
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      if (modal && !modal.hidden) {
+    if (modal && !modal.hidden) {
+      trapModalFocus(event);
+      if (event.key === "Escape") {
         closeProgramModal();
         return;
       }
+    }
+    if (event.key === "Escape") {
       closeNav();
     }
   });
@@ -971,14 +1059,26 @@
     progressBar.style.transform = `scaleX(${ratio})`;
   };
 
-  const onScroll = () => {
+  const handleScroll = () => {
     const y = window.scrollY;
     header?.classList.toggle("is-scrolled", y > 8);
     toTop?.classList.toggle("is-visible", y > 600);
+    if (toTop) {
+      const show = y > 600;
+      toTop.tabIndex = show ? 0 : -1;
+      if (show) {
+        toTop.removeAttribute("aria-hidden");
+        toTop.removeAttribute("inert");
+      } else {
+        toTop.setAttribute("aria-hidden", "true");
+        toTop.setAttribute("inert", "");
+      }
+    }
     updateProgress();
 
     let current = "";
-    for (const section of sections) {
+    const ordered = [...sections].sort((a, b) => a.offsetTop - b.offsetTop);
+    for (const section of ordered) {
       if (section.offsetTop - 120 <= y) current = `#${section.id}`;
     }
     navLinks.forEach((link) => {
@@ -986,15 +1086,24 @@
     });
   };
 
+  let scrollQueued = false;
+  const onScroll = () => {
+    if (scrollQueued) return;
+    scrollQueued = true;
+    requestAnimationFrame(() => {
+      handleScroll();
+      scrollQueued = false;
+    });
+  };
+
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", updateProgress, { passive: true });
-  onScroll();
+  handleScroll();
 
   toTop?.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // BMSTU-style hero entrance
   const heroAnims = document.querySelectorAll(".hero-anim");
   if (reduceMotion) {
     heroAnims.forEach((el) => el.classList.add("is-in"));
